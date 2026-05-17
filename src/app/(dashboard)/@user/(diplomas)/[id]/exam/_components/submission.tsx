@@ -7,6 +7,15 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ISubmitExamPayload } from "@/features/questions/types/submissions";
 
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+
+import { Pie, PieChart, Cell } from "recharts";
+
 type ExamResultProps = {
   result: ISubmitExamPayload;
 };
@@ -16,6 +25,30 @@ export default function ExamResult({ result }: ExamResultProps) {
 
   const wrongAnswers = analytics.filter((item) => item.isCorrect === false);
 
+  const chartData = [
+    {
+      name: "Correct",
+      value: submission.correctAnswers,
+      fill: "var(--color-correct)",
+    },
+    {
+      name: "Wrong",
+      value: submission.wrongAnswers,
+      fill: "var(--color-wrong)",
+    },
+  ];
+
+  const chartConfig = {
+    correct: {
+      label: "Correct",
+      color: "#22c55e",
+    },
+    wrong: {
+      label: "Wrong",
+      color: "#ef4444",
+    },
+  } satisfies ChartConfig;
+
   return (
     <div className="space-y-6">
       <h3 className="text-xl font-semibold text-blue-600">Results:</h3>
@@ -23,6 +56,25 @@ export default function ExamResult({ result }: ExamResultProps) {
       <div className="grid grid-cols-[250px_1fr] gap-6">
         <div className="rounded bg-blue-50 p-6">
           <p className="text-lg font-semibold">Score: {submission.score}%</p>
+
+          <ChartContainer
+            config={chartConfig}
+            className="mx-auto aspect-square max-h-[250px]"
+          >
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+
+              <Pie
+                data={chartData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={60}
+              />
+            </PieChart>
+          </ChartContainer>
 
           <div className="mt-4 space-y-2 text-sm">
             <p className="text-green-600">
@@ -56,7 +108,7 @@ export default function ExamResult({ result }: ExamResultProps) {
                 >
                   <FieldLabel
                     htmlFor={`${item.questionId}-selected`}
-                    className="rounded-none border-none bg-red-50  hover:bg-red-50"
+                    className="rounded-none border-none bg-red-50 hover:bg-red-50"
                   >
                     <Field orientation="horizontal">
                       <RadioGroupItem
@@ -66,16 +118,14 @@ export default function ExamResult({ result }: ExamResultProps) {
                       />
 
                       <FieldContent>
-                        <FieldTitle>
-                         {item.selectedAnswer.text}
-                        </FieldTitle>
+                        <FieldTitle>{item.selectedAnswer.text}</FieldTitle>
                       </FieldContent>
                     </Field>
                   </FieldLabel>
 
                   <FieldLabel
                     htmlFor={`${item.questionId}-correct`}
-                    className="rounded-none border-none bg-green-50  hover:bg-green-50"
+                    className="rounded-none border-none bg-green-50 hover:bg-green-50"
                   >
                     <Field orientation="horizontal">
                       <RadioGroupItem

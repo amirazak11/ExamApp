@@ -13,7 +13,7 @@ export default function BackButton() {
       variant="outline"
       size="icon"
       onClick={() => router.back()}
-      className=" rounded-sm border-blue-500 text-blue-600 hover:bg-blue-50"
+      className="h-14 rounded-0 border-blue-500 text-blue-600 hover:bg-blue-50"
     >
       <ChevronLeft className="h-4 w-4" />
     </Button>

@@ -2,9 +2,9 @@
 
 import { Suspense, useMemo } from "react";
 import { ScrollCard } from "./scroll";
-import useDiplomaList from "@/features/doplomas/hooks/use-diplomas-list";
 import DiplomasList from "./Doploma-list";
 import { IDiploma } from "@/lib/types/IDiploma";
+import useDiplomaList from "@/features/doplomas/_hooks/use-diplomas-list";
 
 export default function DiplomasSkeleton() {
   const { data, fetchNextPage, hasNextPage, isLoading, isError } = useDiplomaList();

@@ -2,16 +2,20 @@ import { OtpForm } from "./otp"
 
 type Props = {
   email: string
-  onNext: () => void
   onBack: () => void
-  updateFormData: (data: { otp: string }) => void
+  updateFormData?: (data: { otp: string }) => void
+  onResendCode: () => void
+  onVerifyOtp: (otp: string) => void
+  isPending?: boolean
 }
 
 export default function VerifyOtpStep({
   email,
   onBack,
-  onNext,
   updateFormData,
+  onResendCode,
+  onVerifyOtp,
+  isPending,
 }: Props) {
   return (
     <>
@@ -27,9 +31,10 @@ export default function VerifyOtpStep({
       </p>
 
       <OtpForm
-        email={email}
-        onNext={onNext}
         updateFormData={updateFormData}
+        onResendCode={onResendCode}
+        onVerifyOtp={onVerifyOtp}
+        isPending={isPending}
       />
     </>
   )

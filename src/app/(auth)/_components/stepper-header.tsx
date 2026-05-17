@@ -1,58 +1,46 @@
-import { Progress } from "@/components/ui/progress"
-import { useState } from "react"
-
 type StepItem = {
-  id: number
-  title: string
-  subtitle: string
-}
+  id: number;
+  title: string;
+  subtitle: string;
+};
 
 type StepperHeaderProps = {
-  steps: StepItem[]
-  currentStep: number
-  progressValue: number
-}
+  steps: StepItem[];
+  currentStep: number;
+};
 
-export function StepperHeader({
-  steps,
-  currentStep,
-  progressValue,
-}: StepperHeaderProps) {
-    const [step, setStep] = useState(1)
+export function StepperHeader({ steps, currentStep }: StepperHeaderProps) {
   return (
-      <div className="flex items-center justify-between">
-        {steps.map((stepItem, index) => {
-          const isActive = currentStep === stepItem.id
-          const isCompleted = currentStep > stepItem.id
+    <div className="mb-8 flex w-full items-center">
+      {steps.map((stepItem, index) => {
+        const isActive = currentStep === stepItem.id;
+        const isCompleted = currentStep > stepItem.id;
+        const isLast = index === steps.length - 1;
 
-          return (
-            <div key={stepItem.id} className="flex flex-1 items-center">
-              <div className="flex items-center gap-2">
-                <div
-                  className={[
-                    "flex size-4 items-center justify-center rotate-45  rounded-none  text-sm font-semibold transition ",
-                    isCompleted
-                      ? " bg-blue-600"
-                      : isActive
-                      ? "border-blue-100 bg-blue-600 border-5 size-6"
-                      : "border-blue-600 border bg-blue-100 ",
-                  ].join(" ")}
-                >
-               
-                </div>
-              </div>
+        return (
+          <div key={stepItem.id} className="flex flex-1 items-center last:flex-none">
+            <div
+              className={[
+                "shrink-0 rotate-45 transition-all",
+                isActive
+                  ? "size-6 border-4 border-blue-100 bg-blue-600"
+                  : isCompleted
+                  ? "size-4 bg-blue-600"
+                  : "size-4 border border-blue-600 bg-blue-100",
+              ].join(" ")}
+            />
 
-              {index !== steps.length - 1 && (
-                <div
-                  className={[
-                    " border border-blue-600 flex-1 ",
-                    currentStep > stepItem.id ? "" : "border-dashed",
-                  ].join(" ")}
-                />
-              )}
-            </div>
-          )
-        })}
-      </div>
-  )
+            {!isLast && (
+              <div
+                className={[
+                  "mx-2 h-0 flex-1 border-t border-blue-600",
+                  isCompleted ? "border-solid" : "border-dashed",
+                ].join(" ")}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
 }

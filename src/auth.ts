@@ -46,29 +46,30 @@ export const authOptions: NextAuthOptions = {
           token: data.payload.token,
           user: data.payload.user,
         };
+        
       },
     }),
   ],
 
-  callbacks: {
-    jwt: ({ token, user ,session,trigger }) => {
-      if (user) {
-        token.user = user.user;
-        token.token = user.token;
-      }
-      if (trigger === 'update' && session) {
-        token.user = session.user;
-        token.token = session.accessToken;
-      }
+callbacks: {
+  jwt: ({ token, user, session, trigger }) => {
+    if (user) {
+      token.user = user.user;
+      token.token = user.token;
+    }
 
-      return token;
-    },
+    if (trigger === "update" && session) {
+      token.user = session.user;
+      token.token = session.token;
+    }
 
-    session: ({ session, token }) => {
-      session.user = token.user;
-      return session;
-    },
+    return token;
   },
 
+  session: ({ session, token }) => {
+    session.user = token.user;
+    return session;
+  },
+},
   secret: process.env.NEXTAUTH_SECRET,
 };

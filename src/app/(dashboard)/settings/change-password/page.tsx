@@ -46,8 +46,7 @@ export default function ChangePassword() {
   });
 
   const onSubmit = (data: FormValues) => {
-    Changepassword(data);
-  };
+   };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">

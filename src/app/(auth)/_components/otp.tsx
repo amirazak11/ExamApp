@@ -1,40 +1,36 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { toast } from "sonner"
 import { useForm, Controller } from "react-hook-form"
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
-import useEmail from "../login/_hooks/use-email"
-import useOtp from "../login/_hooks/use-otp"
 
 type OtpFormValues = {
   otp: string
 }
 
 type Props = {
-  email: string
-  onNext: () => void
-  updateFormData: (data: { otp: string }) => void
+  updateFormData?: (data: { otp: string }) => void
+  onResendCode: () => void
+  onVerifyOtp: (otp: string) => void
+  isPending?: boolean
 }
 
 export function OtpForm({
-  email,
-  onNext,
   updateFormData,
+  onResendCode,
+  onVerifyOtp,
+  isPending,
 }: Props) {
   const [seconds, setSeconds] = useState(0)
   const [isVerificationStarted, setIsVerificationStarted] = useState(false)
-  const [isResend, setIsResend] = useState(true)
-  const { createEmail } = useEmail()
-  const { sendOtp } = useOtp()
 
   const { control, handleSubmit, watch } = useForm<OtpFormValues>({
     defaultValues: {
-      otp: ""
+      otp: "",
     },
   })
 
@@ -50,32 +46,19 @@ export function OtpForm({
     return () => clearInterval(timer)
   }, [isVerificationStarted, seconds])
 
+  const startTimer = () => {
+    setIsVerificationStarted(true)
+    setSeconds(60)
+  }
+
   const handleFormSubmit = (data: OtpFormValues) => {
-    sendOtp(
-      { email, code: data.otp },
-      {
-        onSuccess: (response) => {
-          if (response.status) {
-            updateFormData({ otp: data.otp })
-                onNext()
-          }
-        },
-        onError: (error) => {
-                       toast.error(error.message)
-                        setIsVerificationStarted(true)
-                       setSeconds(60)
-        },
-      }
-    )
+    updateFormData?.({ otp: data.otp })
+    onVerifyOtp(data.otp)
   }
 
   const resendCode = () => {
-    createEmail(
-      { email },
-      {
-
-      }
-    )
+    onResendCode()
+    startTimer()
   }
 
   return (
@@ -90,7 +73,7 @@ export function OtpForm({
             value={field.value}
             onChange={(newValue) => {
               field.onChange(newValue)
-              updateFormData({ otp: newValue })
+              updateFormData?.({ otp: newValue })
             }}
           >
             <InputOTPGroup className="mx-auto gap-3">
@@ -105,15 +88,15 @@ export function OtpForm({
         )}
       />
 
-        <div>
-          <button
-            type="submit"
-            disabled={otp.length !== 6}
-            className="mx-auto block h-11 bg-transparent text-sm font-medium text-gray-800 disabled:opacity-50"
-          >
-           Verify Code
-          </button>
-        </div>
+      <div>
+        <button
+          type="submit"
+          disabled={otp.length !== 6 || isPending}
+          className="mx-auto block h-11 bg-transparent text-sm font-medium text-gray-800 disabled:opacity-50"
+        >
+          {isPending ? "Verifying..." : "Verify Code"}
+        </button>
+      </div>
 
       {isVerificationStarted && seconds > 0 && (
         <div className="text-center text-sm text-gray-500">
@@ -121,12 +104,12 @@ export function OtpForm({
         </div>
       )}
 
-      {!isResend && isVerificationStarted && seconds === 0 && (
+      {isVerificationStarted && seconds === 0 && (
         <div className="text-center">
           <button
             type="button"
             onClick={resendCode}
-            className="mx-auto block bg-transparent text-sm font-medium text-slate-800 disabled:opacity-50"
+            className="mx-auto block bg-transparent text-sm font-medium text-slate-800"
           >
             Resend Code
           </button>

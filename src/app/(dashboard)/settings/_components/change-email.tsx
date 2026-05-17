@@ -28,6 +28,7 @@ type Props = {
   showLoginLink?: boolean
   buttonVariant?: "next" | "submit"
 }
+
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
 })

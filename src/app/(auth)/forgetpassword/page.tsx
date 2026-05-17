@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Header } from "../_components/header"
 import { IRegisterFields } from "@/lib/types/auth"
-import PasswordResetSent from "../_components/verify-otp copy"
+import PasswordResetSent from "../_components/password-reset-sent"
 import { ForgetPasswordStep } from "../_components/forgetpassword"
 
 const steps = [

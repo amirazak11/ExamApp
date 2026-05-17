@@ -1,27 +1,27 @@
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/ui/app-sidebar"
-import { AppBreadcrumb } from "../(diplomas)/_components/shared/breadcremb"
-import {  FolderCodeIcon } from 'lucide-react'
-import { Header } from "../(diplomas)/_components/shared/header"
+import { FolderCodeIcon } from 'lucide-react'
+import { AppBreadcrumb } from "../@user/(diplomas)/_components/shared/breadcremb"
+import { Header } from "../@user/(diplomas)/_components/shared/header"
 export default function Layout({ children }: { children: React.ReactNode }) {
 const userMenu = [
   {
     id: 1,
-    title: "profile",
-    icon: "diplomas",
+    title: "Profile",
+    icon: "UserRound",
     link: "/settings",
   },
   {
     id: 2,
-    title: "change password",
-    icon: "user",
+    title: "Change Password",
+    icon: "KeyRound",
     link: "/settings/change-password",
   },
 ]
   return (
     <>
 <div className="max-h-full gap-3">
-          <AppBreadcrumb   items={[
+          <AppBreadcrumb  items={[
     { label: "Home", href: "/" },
     { label: "Components", href: "/components" },
     { label: "Breadcrumb" },
@@ -29,9 +29,8 @@ const userMenu = [
 
 <div className="p-6 space-y-3">
       <Header title="Settings" icon={FolderCodeIcon} />
-{/* <DiplomasSkeleton/> */}
   
-    <SidebarProvider className="h-full gap-4 "
+    <SidebarProvider className="h-[calc(100vh-180px)] gap-4 "
       style={
         {
           "--sidebar-width": "20rem",
@@ -39,7 +38,7 @@ const userMenu = [
         } as React.CSSProperties
       }
     >
-      <AppSidebar className="bg-white" menuItems={userMenu} />
+      <AppSidebar className="bg-white h-full" menuItems={userMenu} footerType="logout" />
 
           {children}
 </SidebarProvider>

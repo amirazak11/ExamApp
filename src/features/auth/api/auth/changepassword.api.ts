@@ -25,7 +25,7 @@ export async function ChangepasswordAction(fields: ResetPasswordPayload) {
   if (payload.status !== true) {
     throw new Error(payload.message);
   }
-  updateTag('posts')
+  updateTag('user')
 
   return payload;
 }

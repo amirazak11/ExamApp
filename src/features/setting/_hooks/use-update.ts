@@ -1,9 +1,9 @@
 "use client";
 
 import { IUpdateProfileFields } from "@/features/auth/types/user";
-import { updateProfileAction } from "@/features/setting/api/auth/user.api";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { updateProfileAction } from "../api/auth/user.api";
 
 export default function useUpdateProfile() {
   const { data: session, update } = useSession();
