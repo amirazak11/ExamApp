@@ -1,6 +1,6 @@
 "use client";
 
-import {  sendOtp } from "@/lib/api/auth/auth.api";
+import { sendOtp } from "@/features/auth/api/auth/auth.api";
 import { useMutation } from "@tanstack/react-query";
 
 export default function useOtp() {

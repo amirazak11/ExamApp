@@ -135,7 +135,6 @@ export default function RegisterStepperPage() {
       <StepperHeader
         steps={steps}
         currentStep={step}
-        progressValue={progressValue}
       />
 
       <Header

@@ -132,7 +132,6 @@ export default function EmailStepperPage() {
       <StepperHeader
         steps={steps}
         currentStep={step}
-        progressValue={progressValue}
       />
 
       <Header

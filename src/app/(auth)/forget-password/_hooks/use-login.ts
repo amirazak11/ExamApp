@@ -1,5 +1,5 @@
 'use client';
-import { loginAction } from '@/lib/api/auth/auth.api';
+import { loginAction } from '@/features/auth/api/auth/auth.api';
 import { useMutation } from '@tanstack/react-query';
 
 export default function useLogin() {

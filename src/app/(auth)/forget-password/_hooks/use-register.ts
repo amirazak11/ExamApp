@@ -1,5 +1,5 @@
 'use client';
-import { signupAction } from '@/lib/api/auth/auth.api';
+import { signupAction } from '@/features/auth/api/auth/auth.api';
 import { useMutation } from '@tanstack/react-query';
 
 export default function useRegister() {
