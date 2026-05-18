@@ -22,35 +22,39 @@ return payload;
 
 }
 export async function createAccount(fields: CreateEmailPayload) {
-  const response = await fetch('https://exam-app.elevate-bootcamp.cloud/api/auth/send-email-verification', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/send-email-verification`, {
     method: 'POST',
     body: JSON.stringify(fields),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: Headers.jsonBody,
   })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
 
   const payload: IApiResponse<IRegisterFields> = await response.json();
 
   if (payload.status !== true) {
-    throw new Error(payload.message);
+    throw new Error(payload.message || 'Failed to create account');
   }
 
 return payload;
 }
 export async function sendOtp(fields: IOtp) {
-  const response = await fetch('https://exam-app.elevate-bootcamp.cloud/api/auth/confirm-email-verification', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/confirm-email-verification`, {
     method: 'POST',
     body: JSON.stringify(fields),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: Headers.jsonBody,
   })
-console.log("API response:", response);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
   const payload: IApiResponse<IOtp> = await response.json();
 
   if (payload.status !== true) {
-    throw new Error(payload.message);
+    throw new Error(payload.message || 'Failed to verify OTP');
   }
 
 return payload;
@@ -58,21 +62,22 @@ return payload;
 
 
 export async function signupAction(fields: IRegisterFields) {
-  const response = await fetch('https://exam-app.elevate-bootcamp.cloud/api/auth/register', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
     method: 'POST',
     body: JSON.stringify(fields),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: Headers.jsonBody,
   })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
 
   const payload: IApiResponse<IRegisterFields> = await response.json();
 
   if (payload.status !== true) {
-    throw new Error(payload.message);
+    throw new Error(payload.message || 'Registration failed');
   }
-return payload;
 
-
+  return payload;
 }
 

@@ -18,6 +18,7 @@ import { InputGroup } from "@/components/ui/input-group";
 import PasswordField from "@/components/shared/pasword-field";
 import { useState } from "react";
 import { resetpassword } from "@/features/auth/api/forgetpassword/forgetpassword.api";
+import ErrorAlert from "@/components/shared/error-alert";
 
 const formSchema = z
   .object({
@@ -36,6 +37,7 @@ export default function CreateNewPasswordStep() {
   const token = searchParams.get("token");
 
   const [isPending, setIsPending] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,6 +63,7 @@ const router = useRouter();
       toast.success(postsPayload.message);
       router.push("/login");
     } catch (error) {
+          setErrorMessage(error.message || "Something went wrong");
       toast.error(
         error instanceof Error ? error.message : "Something went wrong"
       );
@@ -113,7 +116,9 @@ const router = useRouter();
           )}
         />
       </FieldGroup>
-
+        {errorMessage && (
+  <ErrorAlert message={errorMessage} />
+)}
       <RegisterButton isPending={isPending} />
     </form>
   );

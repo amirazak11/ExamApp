@@ -69,7 +69,7 @@ export function AppSidebar({
 
   return (
     <Sidebar
-      className={cn("h-screen bg-blue-50", className)}
+      className={cn("h-screen", className)}
       collapsible="none"
     >
       {logoSrc && (

@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+import { Headers } from "@/components/constants/api.constants";
 
 export async function GET(request: NextRequest) {
   const token = await getToken({ req: request });
@@ -35,9 +36,7 @@ export async function GET(request: NextRequest) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/exams?diplomaId=${diplomaId}&page=${page}&limit=${limit}`,
     {
-      headers: {
-        Authorization: `Bearer ${token.token}`,
-      },
+      headers: Headers.authorization(token.token as string),
       cache: "no-store",
     }
   );

@@ -18,6 +18,7 @@ import { InputGroup } from "@/components/ui/input-group";
 import PasswordField from "@/components/shared/pasword-field";
 import Link from "next/link";
 import { loginSchema } from "@/features/auth/schema/login-schema";
+import ErrorAlert from "@/components/shared/error-alert";
 
 type FormValues = z.infer<typeof loginSchema>;
 
@@ -30,7 +31,7 @@ export default function LoginForm() {
     },
   });
 
-  const { login, isPending } = useLogin();
+  const { login, isPending ,error } = useLogin();
 
   const onSubmit = (data: FormValues) => {
     login(data);
@@ -73,7 +74,9 @@ export default function LoginForm() {
                   autoComplete="current-password"
                 />
               </InputGroup>
-
+              {fieldState.invalid && (
+                <FieldError errors={[fieldState.error]} />
+              )}
               <Link
                 href="/forget-password"
                 className="flex justify-end text-sm font-medium text-blue-600"
@@ -81,12 +84,13 @@ export default function LoginForm() {
                 Forgot password?
               </Link>
 
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+
             </Field>
           )}
         />
+        {error && (
+  <ErrorAlert message={error || "Something went wrong"} />
+)}
       </FieldGroup>
 
       <RegisterButton variant="submit" isPending={isPending} />

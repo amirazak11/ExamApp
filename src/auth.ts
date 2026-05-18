@@ -31,7 +31,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         const data = await loginAction(result.data);
-        console.log("AUTHORIZE DATA:", data);
 
         if (!data.status) {
           throw new Error(data.message);

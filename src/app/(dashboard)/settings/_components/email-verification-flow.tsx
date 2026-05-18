@@ -43,8 +43,6 @@ export default function EmailStepperPage() {
     otp: "",
   })
 
-  const progressValue = (step / steps.length) * 100
-
   const nextStep = () => {
     if (step < steps.length) {
       setStep((prev) => prev + 1)
