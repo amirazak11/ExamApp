@@ -106,7 +106,7 @@ export default function RegisterPage({
 />
       </FieldGroup>
 
-<RegisterButton variant="next" />
+<RegisterButton variant="next" onClick={form.handleSubmit(onSubmit)} />
 
     </form>
     

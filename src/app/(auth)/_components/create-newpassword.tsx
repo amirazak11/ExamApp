@@ -63,7 +63,7 @@ const router = useRouter();
       toast.success(postsPayload.message);
       router.push("/login");
     } catch (error) {
-          setErrorMessage(error.message || "Something went wrong");
+          setErrorMessage(error instanceof Error ? error.message : "Something went wrong");
       toast.error(
         error instanceof Error ? error.message : "Something went wrong"
       );

@@ -2,19 +2,19 @@
 
 import { IApiResponse } from "@/lib/types/api";
 import { ForgetPasswordPayload, IRegisterFields, ResetPasswordPayload } from "@/lib/types/auth";
-export async function forgetpassword(fields: ForgetPasswordPayload) {
-  const response = await fetch(
-    "https://exam-app.elevate-bootcamp.cloud/api/auth/forgot-password",
-    {
-      method: "POST",
-      body: JSON.stringify(fields),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
 
-  const payload: IApiResponse<IRegisterFields> = await response.json();
+const BASE = process.env.NEXT_PUBLIC_API_URL;
+
+export async function forgetpassword(fields: ForgetPasswordPayload) {
+  const response = await fetch(`${BASE}/auth/forgot-password`, {
+    method: "POST",
+    body: JSON.stringify(fields),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const payload: IApiResponse<IRegisterFields> = await response.json().catch(() => {
+    throw new Error("Failed to parse server response");
+  });
 
   if (!response.ok || payload.status !== true) {
     throw new Error(payload.message || "Failed to send reset email");
@@ -24,22 +24,18 @@ export async function forgetpassword(fields: ForgetPasswordPayload) {
 }
 
 export async function resetpassword(fields: ResetPasswordPayload) {
+  const response = await fetch(`${BASE}/auth/reset-password`, {
+    method: "POST",
+    body: JSON.stringify(fields),
+    headers: { "Content-Type": "application/json" },
+  });
 
-  const response = await fetch(
-    "https://exam-app.elevate-bootcamp.cloud/api/auth/reset-password",
-    {
-      method: "POST",
-      body: JSON.stringify(fields),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  const payload: IApiResponse<IRegisterFields> = await response.json();
+  const payload: IApiResponse<IRegisterFields> = await response.json().catch(() => {
+    throw new Error("Failed to parse server response");
+  });
 
   if (!response.ok || payload.status !== true) {
-    throw new Error(payload.message || "Failed to send reset email");
+    throw new Error(payload.message || "Failed to reset password");
   }
 
   return payload;

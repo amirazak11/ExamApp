@@ -44,7 +44,6 @@ export default function RegisterStepperPage() {
     otp: "",
   });
 
-  const progressValue = (step / steps.length) * 100;
 
   const nextStep = () => {
     if (step < steps.length) {

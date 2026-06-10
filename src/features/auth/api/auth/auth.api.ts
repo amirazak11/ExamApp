@@ -1,6 +1,5 @@
 
 
-// import 'server-only';
 "use server"
 import { Headers } from "@/components/constants/api.constants";
 import { IApiResponse } from "@/lib/types/api";
@@ -62,22 +61,20 @@ return payload;
 
 
 export async function signupAction(fields: IRegisterFields) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-    method: 'POST',
-    body: JSON.stringify(fields),
-    headers: Headers.jsonBody,
-  })
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+    {
+      method: "POST",
+      headers: Headers.jsonBody,
+      body: JSON.stringify(fields),
+    }
+  );
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
+  const payload = await response.json();
 
-  const payload: IApiResponse<IRegisterFields> = await response.json();
-
-  if (payload.status !== true) {
-    throw new Error(payload.message || 'Registration failed');
+  if (!response.ok || payload.status !== true) {
+    throw new Error(payload.message || "Registration failed");
   }
 
   return payload;
 }
-

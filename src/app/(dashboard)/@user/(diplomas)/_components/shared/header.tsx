@@ -11,7 +11,7 @@ type HeaderProps = {
 
 export function Header({ title, icon: Icon, className ,backbutton }: HeaderProps) {
   return (
-    <div className="flex gap-2 mb-6 ">
+    <div className="flex gap-2">
         {backbutton && <BackButton />}
     <div
       className={cn(

@@ -24,3 +24,23 @@ export interface IQuestion {
 export type ExamQuestionsPayload = {
   questions: IQuestion[];
 };
+
+export interface IQuestionAnswerPayload {
+  text: string;
+  isCorrect: boolean;
+}
+
+export interface ICreateQuestionPayload {
+  text: string;
+  answers: IQuestionAnswerPayload[];
+}
+
+export interface ICreateQuestionWithExamPayload extends ICreateQuestionPayload {
+  examId: string;
+}
+
+export type IUpdateQuestionPayload = Partial<ICreateQuestionPayload>;
+
+export interface IBulkQuestionsPayload {
+  questions: ICreateQuestionPayload[];
+}

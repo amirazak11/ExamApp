@@ -11,6 +11,7 @@ import RegisterButton from "./login-button"
 import { InputGroup } from "@/components/ui/input-group"
 import PasswordField from "@/components/shared/pasword-field"
 import useRegister from "../login/_hooks/use-register"
+import ErrorAlert from "@/components/shared/error-alert"
 
 type Props = {
   onNext?: () => void
@@ -43,7 +44,7 @@ export default function CreatePasswordStep({
       confirmPassword: formData.confirmPassword ?? "",
     },
   })
-  const { isPending, register } = useRegister()
+  const { isPending, register , error } = useRegister()
   function onSubmit(data: FormValues) {
     const finalData: IRegisterFields = {
       firstName: formData.firstName ?? "",
@@ -109,8 +110,10 @@ export default function CreatePasswordStep({
           )}
         />
       </FieldGroup>
-
-      <RegisterButton variant="next" isPending={isPending} />
+        {error && (
+  <ErrorAlert message={error.message || "Something went wrong"} />
+)}
+      <RegisterButton variant="submit" isPending={isPending} />
     </form>
   )
 }

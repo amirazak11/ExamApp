@@ -18,6 +18,10 @@ import useChangePassword from "@/app/(auth)/login/_hooks/use-changepassword";
 
 const formSchema = z
   .object({
+    currentPassword: z
+      .string()
+      .min(1, "Current password is required"),
+
     password: z
       .string()
       .min(1, "Password is required")
@@ -40,19 +44,21 @@ export default function ChangePassword() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      currentPassword: "",
       password: "",
       confirmPassword: "",
     },
   });
 
   const onSubmit = (data: FormValues) => {
-   };
+    Changepassword(data);
+  };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
       <FieldGroup>
-                <Controller
-          name="password"
+        <Controller
+          name="currentPassword"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
@@ -61,8 +67,8 @@ export default function ChangePassword() {
               <InputGroup>
                 <PasswordField
                   {...field}
-                  id="password"
-                  autoComplete="Current Password"
+                  id="currentPassword"
+                  autoComplete="current-password"
                 />
               </InputGroup>
 
@@ -72,12 +78,13 @@ export default function ChangePassword() {
             </Field>
           )}
         />
+
         <Controller
           name="password"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Password</FieldLabel>
+              <FieldLabel>New Password</FieldLabel>
 
               <InputGroup>
                 <PasswordField

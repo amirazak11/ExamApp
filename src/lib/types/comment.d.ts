@@ -5,6 +5,7 @@ export interface IExam {
   image: string | null;
   duration: number;
   diplomaId: string;
+  immutable: boolean;
   createdAt: string;
   updatedAt: string;
   questionsCount: number;

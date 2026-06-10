@@ -16,8 +16,7 @@ export default async function Diplomas() {
 
         <div className="p-6 space-y-3">
       <Header title="Diplomas" icon={FolderCodeIcon} />
-                  <Suspense fallback={<div>Loading...</div>}>
-
+              <Suspense fallback={<div>Loading...</div>}>
        <DiplomasSkeleton/>
        </Suspense>
         </div>

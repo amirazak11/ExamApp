@@ -15,6 +15,7 @@ const authRoutes = [
 
 export default async function proxy(request: NextRequest) {
   const jwt = await getToken({ req: request });
+ const isAuth = request.cookies.get("next-auth.session-token")?.value;
   const pathname = request.nextUrl.pathname;
 
   const isPrivateRoute =
@@ -37,7 +38,7 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (isAuthRoute && jwt) {
+  if (isAuthRoute && jwt && isAuth) {
     return NextResponse.redirect(new URL("/", request.nextUrl.origin));
   }
 

@@ -23,9 +23,16 @@ import {
   LogOut,
   Logs,
   LockKeyhole,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 type MenuItem = {
   id: number | string;
   title: string;
@@ -130,39 +137,60 @@ export function AppSidebar({
         {footerType === "user" ? (
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton
-                size="lg"
-                asChild
-                className="h-auto w-full justify-start gap-3 rounded-none px-0 py-0 hover:bg-transparent"
-              >
-                <Link href="/settings">
-                  <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden border border-blue-500 bg-blue-100">
-                    {userImage ? (
-                      <Image
-                        src={userImage}
-                        alt={userName ?? "User"}
-                        width={40}
-                        height={40}
-                        className="size-full object-cover"
-                      />
-                    ) : (
-                      <UserRound className="size-5 text-blue-500" />
-                    )}
-                  </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="h-auto w-full justify-start gap-3 rounded-none px-0 py-0 hover:bg-transparent"
+                  >
+                    <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden border border-blue-500 bg-blue-100">
+                      {userImage ? (
+                        <Image
+                          src={userImage}
+                          alt={userName ?? "User"}
+                          width={40}
+                          height={40}
+                          className="size-full object-cover"
+                        />
+                      ) : (
+                        <UserRound className="size-5 text-blue-500" />
+                      )}
+                    </div>
 
-                  <div className="flex min-w-0 flex-1 flex-col text-left leading-tight">
-                    <span className="truncate text-xs font-semibold text-blue-500">
-                      {userName ?? "Firstname"}
-                    </span>
+                    <div className="flex min-w-0 flex-1 flex-col text-left leading-tight">
+                      <span className="truncate text-xs font-semibold text-blue-500">
+                        {userName ?? "Firstname"}
+                      </span>
 
-                    <span className="truncate text-[10px] text-gray-500">
-                      {userEmail ?? "user-email@example.com"}
-                    </span>
-                  </div>
+                      <span className="truncate text-[10px] text-gray-500">
+                        {userEmail ?? "user-email@example.com"}
+                      </span>
+                    </div>
 
-                  <MoreVertical className="size-4 shrink-0 text-gray-400" />
-                </Link>
-              </SidebarMenuButton>
+                    <MoreVertical className="size-4 shrink-0 text-gray-400" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent
+                  align="end"
+                  side="top"
+                  className="w-56 border border-gray-100 bg-white p-0"
+                >
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href="/settings">
+                      <Settings className="size-4 text-blue-500" />
+                      Account Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer text-red-600 focus:text-red-600"
+                    onSelect={() => signOut({ callbackUrl: "/login" })}
+                  >
+                    <LogOut className="size-4 text-red-500" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </SidebarMenuItem>
           </SidebarMenu>
         ) : (

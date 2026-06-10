@@ -106,7 +106,7 @@ export default function ExamForm({
 
   return (
     <form id="form-rhf-demo" onSubmit={handleSubmit}>
-      <div className="mb-6">
+      <div className="">
         <h3 className="pb-4 text-2xl font-semibold text-blue-600">
           {currentQuestion.text}
         </h3>

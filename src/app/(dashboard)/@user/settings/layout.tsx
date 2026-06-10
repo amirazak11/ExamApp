@@ -1,8 +1,9 @@
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/ui/app-sidebar"
 import { FolderCodeIcon } from 'lucide-react'
-import { AppBreadcrumb } from "../@user/(diplomas)/_components/shared/breadcremb"
-import { Header } from "../@user/(diplomas)/_components/shared/header"
+import { Header } from "../(diplomas)/_components/shared/header"
+import { AppBreadcrumb } from "../(diplomas)/_components/shared/breadcremb"
+
 export default function Layout({ children }: { children: React.ReactNode }) {
 const userMenu = [
   {

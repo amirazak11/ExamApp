@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, Controller, useWatch } from "react-hook-form"
 import {
   InputOTP,
   InputOTPGroup,
@@ -28,22 +28,25 @@ export function OtpForm({
   const [seconds, setSeconds] = useState(0)
   const [isVerificationStarted, setIsVerificationStarted] = useState(false)
 
-  const { control, handleSubmit, watch } = useForm<OtpFormValues>({
+  const { control, handleSubmit } = useForm<OtpFormValues>({
     defaultValues: {
       otp: "",
     },
   })
 
-  const otp = watch("otp")
+  const otp = useWatch({
+    control,
+    name: "otp",
+  })
 
   useEffect(() => {
     if (!isVerificationStarted || seconds <= 0) return
 
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
       setSeconds((prev) => prev - 1)
     }, 1000)
 
-    return () => clearInterval(timer)
+    return () => clearTimeout(timer)
   }, [isVerificationStarted, seconds])
 
   const startTimer = () => {
@@ -91,7 +94,7 @@ export function OtpForm({
       <div>
         <button
           type="submit"
-          disabled={otp.length !== 6 || isPending}
+          disabled={(otp?.length ?? 0) !== 6 || isPending}
           className="mx-auto block h-11 bg-transparent text-sm font-medium text-gray-800 disabled:opacity-50"
         >
           {isPending ? "Verifying..." : "Verify Code"}

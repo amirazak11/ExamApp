@@ -23,7 +23,7 @@ const menuItems = [
     title: "Account Settings",
     icon: "UserRound",
     link: "/settings",
-    roles: ["user", "admin"],
+    roles: ["user"],
   },
   
   {
@@ -37,20 +37,19 @@ const menuItems = [
     id: 4,
     title: "Exams",
     icon: "UserRound",
-    link: "/Exams",
-    roles: ["admin"],
+    link: "/exams",
+    roles: ["user", "admin"],
   },
 ];
 
-export default async function Layout({ admin, user,children }: LayoutProps) {
+export default async function Layout({ admin, user }: LayoutProps) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
     redirect("/login");
   }
 
-    // const sessionUser = session.user.role.toLowerCase();
-        const sessionUser = "admin";
+    const sessionUser = session.user.role.toLowerCase();
 
   const filteredMenuItems = menuItems.filter((item) =>
     item.roles.includes(sessionUser)
@@ -69,7 +68,7 @@ export default async function Layout({ admin, user,children }: LayoutProps) {
       >
         <AppSidebar
           menuItems={filteredMenuItems}
-          logoSrc="/zeus.png"
+          logoSrc="/logo.png"
           footerType="user"
                    className={` ${
             isAdmin ? "bg-foreground text-white" : "bg-gray-50"
@@ -78,8 +77,8 @@ export default async function Layout({ admin, user,children }: LayoutProps) {
 
         <main
           className={`w-full h-screen `}
-        >
-           {isAdmin ? admin : user}
+        >        
+          {isAdmin ? admin : user}
 
 
         </main>
