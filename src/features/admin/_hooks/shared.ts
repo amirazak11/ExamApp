@@ -2,6 +2,13 @@ export type PaginationOptions = {
   page?: number
   limit?: number
   search?: string
+  sortBy?: string
+  sortOrder?: string
+  immutable?: string
+  diplomaId?: string
+  category?: string
+  action?: string
+  actorUserId?: string
 }
 
 export type ImmutableVariables = {
@@ -17,8 +24,8 @@ export const adminQueryKeys = {
   exams: (options: PaginationOptions = {}) =>
     [...adminQueryKeys.all, "exams", options] as const,
   exam: (id: string) => [...adminQueryKeys.all, "exams", id] as const,
-  questions: (examId: string) =>
-    [...adminQueryKeys.all, "questions", examId] as const,
+  questions: (examId: string, sort?: string) =>
+    [...adminQueryKeys.all, "questions", examId, sort] as const,
   question: (id: string) => [...adminQueryKeys.all, "questions", id] as const,
   auditLogs: (options: PaginationOptions = {}) =>
     [...adminQueryKeys.all, "audit-logs", options] as const,

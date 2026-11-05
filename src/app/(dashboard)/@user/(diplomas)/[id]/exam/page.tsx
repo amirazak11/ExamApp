@@ -12,16 +12,12 @@ interface ExamPageProps {
 export default async function Exam({ params }: ExamPageProps) {
   const { id } = await params;
   const payload = await getQuestions(id);
-    console.log(payload);
-    
+  const examTitle = payload?.questions?.[0]?.exam?.title ?? "Exam";
+
   return (
 <>
 
-      <AppBreadcrumb   items={[
-    { label: "Home", href: "/" },
-    { label: "Components", href: "/components" },
-    { label: "Breadcrumb" },
-  ]} />
+      <AppBreadcrumb items={[{ label: "Home", href: "/" }, { label: "Diplomas", href: "/" }, { label: "Exams", href: `/${id}` }, { label: examTitle }]} />
         <div className="p-6 space-y-3">
       <Header title="Diplomas" icon={FolderCodeIcon} />
     <Questions examId={ id } data={payload?.questions}/>

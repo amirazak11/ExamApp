@@ -5,12 +5,8 @@ import { useMutation } from '@tanstack/react-query';
 export default function useRegister() {
   const { isPending, error, mutate } = useMutation({
     mutationFn: signupAction,
-    onSuccess: async (finalData) => {
-      console.log(finalData);
-    },
-    onError: (error) => {
-      console.error(error);
-    },
+    onSuccess: () => {},
+    onError: () => {},
   })
 
   return { isPending, error, register: mutate }

@@ -16,11 +16,7 @@ export default async function ExamsPage({ params }: ExamsPageProps) {
     return (
 
     <>
-      <AppBreadcrumb   items={[
-    { label: "Home", href: "/" },
-    { label: "Components", href: "/components" },
-    { label: "Breadcrumb" },
-  ]} />
+      <AppBreadcrumb items={[{ label: "Home", href: "/" }, { label: "Diplomas", href: "/" }, { label: "Exams" }]} />
         <div className="p-6 space-y-3">
       <Header backbutton={true}  title="Diplomas" icon={FolderCodeIcon} />
           <Suspense fallback={<div>Loading...</div>}>

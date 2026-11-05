@@ -12,7 +12,7 @@ export async function ChangepasswordAction(fields: ResetPasswordPayload) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/users/change-password`,
     {
-      method: 'PATCH',
+      method: 'POST',
       body: JSON.stringify(fields),
       headers: {
         'Content-Type': 'application/json',

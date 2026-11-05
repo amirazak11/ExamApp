@@ -1,24 +1,26 @@
-// import 'client-only';
+'use client';
 
 import { ChangepasswordAction } from '@/features/auth/api/auth/changepassword.api';
 import { useMutation } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
+import { toast } from 'sonner';
+
+interface ChangePasswordFields {
+  currentPassword: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export default function useChangePassword() {
-  const { update } = useSession();
   const { isPending, error, mutate } = useMutation({
-    mutationFn: ChangepasswordAction,
+    mutationFn: ({ currentPassword, password, confirmPassword }: ChangePasswordFields) =>
+      ChangepasswordAction({ currentPassword, newPassword: password, confirmPassword }),
     onSuccess: (data) => {
-      console.log(data);
-      update({
-        user: {
-          ...data.payload,
-          firstName: 'Test'
-        }
-      })
+      toast.success(data.message || 'Password changed successfully');
+      signOut({ callbackUrl: '/login' });
     },
     onError: (error) => {
-      console.error(error);
+      toast.error(error instanceof Error ? error.message : 'Something went wrong');
     },
   });
 

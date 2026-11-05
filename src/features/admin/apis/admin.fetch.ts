@@ -1,3 +1,4 @@
+import { toast } from "sonner"
 import type { IAuditLog } from "@/features/audit/types/audit-log"
 import type {
   ICreateQuestionWithExamPayload,
@@ -14,20 +15,17 @@ import type {
   IAdminUser,
   IImmutablePayload,
 } from "../types/admin"
+import type { PaginationOptions } from "../_hooks/shared"
 
-type PaginationOptions = {
-  page?: number
-  limit?: number
-  search?: string
-}
-
-function buildQuery({ page = 1, limit = 20, search }: PaginationOptions = {}) {
+function buildQuery({ page = 1, limit = 20, ...filters }: PaginationOptions = {}) {
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
   })
 
-  if (search) params.set("search", search)
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value) params.set(key, value)
+  })
 
   return params.toString()
 }
@@ -35,7 +33,7 @@ function buildQuery({ page = 1, limit = 20, search }: PaginationOptions = {}) {
 async function parseApiResponse<T>(response: Response) {
   const data: IApiResponse<T> = await response.json()
 
-  if (!response.ok || data.status !== true) {
+  if (!response.ok || data.status === false) {
     throw new Error(data.message || "Request failed")
   }
 
@@ -43,15 +41,34 @@ async function parseApiResponse<T>(response: Response) {
 }
 
 async function request<T>(path: string, init?: RequestInit) {
+  const isJsonBody = init?.body && !(init.body instanceof FormData)
   const response = await fetch(path, {
     ...init,
     headers: {
-      ...(init?.body ? { "content-type": "application/json" } : {}),
+      ...(isJsonBody ? { "content-type": "application/json" } : {}),
       ...init?.headers,
     },
   })
 
-  return parseApiResponse<T>(response)
+  try {
+    return await parseApiResponse<T>(response)
+  } catch (error) {
+    if (init?.method) toast.error((error as Error).message)
+    throw error
+  }
+}
+
+export async function uploadAdminImage(file: File) {
+  const body = new FormData()
+  body.set("image", file)
+
+  const data = await request<{ url: string }>("/api/admin/upload", {
+    method: "POST",
+    body,
+  })
+
+  // The API docs show `url` at the top level, other endpoints wrap in `payload`.
+  return data.payload?.url ?? (data as unknown as { url: string }).url
 }
 
 export async function fetchAdminDiplomas(options: PaginationOptions = {}) {
@@ -129,9 +146,11 @@ export async function deleteAdminExam(id: string) {
   })
 }
 
-export async function fetchAdminQuestionsByExam(examId: string) {
+export async function fetchAdminQuestionsByExam(examId: string, sort?: string) {
+  const [sortBy, sortOrder] = sort?.split(":") ?? []
+  const query = sort ? `?sortBy=${sortBy}&sortOrder=${sortOrder}` : ""
   const data = await request<{ questions: IQuestion[] }>(
-    `/api/admin/questions/exam/${examId}`
+    `/api/admin/questions/exam/${examId}${query}`
   )
 
   return data.payload?.questions ?? []

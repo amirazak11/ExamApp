@@ -1,100 +1,91 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
-import { CheckCircle2, Plus } from "lucide-react"
-import type { IQuestion } from "@/features/questions/types/questions"
+import { Plus } from "lucide-react"
 import {
-  AdminDataTable,
-  type AdminTableColumn,
-} from "../../../_components/shared/admin-data-table"
-import { ActionButtons } from "../../../_components/shared/action-buttons"
-import { SectionCard } from "../../../_components/shared/section-card"
-import { Button } from "@/components/ui/button"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import {
   useAdminQuestionsByExam,
   useDeleteAdminQuestion,
 } from "@/features/admin/_hooks/questions/hooks"
+import { ActionButtons } from "../../../_components/shared/action-buttons"
+import { EmptyTableRow } from "../../../_components/shared/empty-table-row"
+import { SectionCard } from "../../../_components/shared/section-card"
+import { SortMenu } from "../../../_components/shared/sort-menu"
+
+const SORT_OPTIONS = [
+  { value: "createdAt:desc", label: "Newest" },
+  { value: "createdAt:asc", label: "Oldest" },
+  { value: "title:asc", label: "Title (A-Z)" },
+  { value: "title:desc", label: "Title (Z-A)" },
+]
 
 type ExamQuestionsSectionProps = {
   examId: string
 }
 
 export function ExamQuestionsSection({ examId }: ExamQuestionsSectionProps) {
+  const [sort, setSort] = useState(SORT_OPTIONS[0].value)
   const { data: questions = [], isLoading, isError } =
-    useAdminQuestionsByExam(examId)
-  const { mutateAsync: deleteQuestion } = useDeleteAdminQuestion()
-
-  const columns: AdminTableColumn<IQuestion>[] = [
-    {
-      key: "text",
-      header: "Title",
-      className: "font-medium text-gray-800",
-      cell: (question) => <p className="line-clamp-2">{question.text}</p>,
-    },
-    {
-      key: "answers",
-      header: "Answers",
-      headClassName: "w-28",
-      cell: (question) => (
-        <div className="flex items-center gap-1.5 text-sm text-gray-600">
-          <CheckCircle2 className="size-3.5 text-emerald-500" />
-          {question.answers.length}
-        </div>
-      ),
-    },
-    {
-      key: "actions",
-      header: "Actions",
-      headClassName: "w-28 text-right",
-      cell: (question) => (
-        <ActionButtons
-          viewHref={`/exams/${examId}/questions/${question.id}`}
-          editHref={`/exams/${examId}/questions/${question.id}/edit`}
-          onDelete={async () => {
-            await deleteQuestion(question.id)
-          }}
-          disabledDelete={question.immutable}
-          disabledDeleteTooltip="Only super admin can delete immutable questions"
-        />
-      ),
-    },
-  ]
-
-  if (isLoading) return <p>Loading questions...</p>
-  if (isError) return <p>Something went wrong loading questions.</p>
+    useAdminQuestionsByExam(examId, sort)
+  const { mutate: deleteQuestion } = useDeleteAdminQuestion()
+  const emptyMessage = isLoading
+    ? "Loading..."
+    : isError
+      ? "Something went wrong"
+      : "No questions found."
 
   return (
     <SectionCard
       title="Exam Questions"
       actions={
-        <Button
-          size="sm"
-          className="h-7 rounded-none gap-1.5 bg-emerald-500 px-3 text-xs hover:bg-emerald-600"
-          asChild
+        <Link
+          href={`/exams/${examId}/questions/new`}
+          className="inline-flex items-center gap-1 text-sm font-medium text-white hover:underline"
         >
-          <Link href={`/exams/${examId}/questions/new`}>
-            <Plus className="size-3.5" />
-            Add Questions
-          </Link>
-        </Button>
+          <Plus className="size-4" />
+          Add Questions
+        </Link>
       }
     >
-      <div className="p-4">
-        <AdminDataTable
-          data={questions}
-          columns={columns}
-          getRowKey={(question) => question.id}
-          searchPlaceholder="Search questions..."
-          searchPredicate={(question, query) =>
-            question.text.toLowerCase().includes(query)
-          }
-          emptyMessage="No questions found."
-          page={1}
-          totalPages={1}
-          total={questions.length}
-          limit={Math.max(questions.length, 1)}
-        />
-      </div>
+      <Table>
+        <TableHeader className="bg-gray-200">
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="normal-case tracking-normal text-gray-700">
+              Title
+            </TableHead>
+            <TableHead className="w-24 normal-case tracking-normal text-gray-700">
+              <SortMenu value={sort} options={SORT_OPTIONS} onChange={setSort} />
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {questions.length === 0 ? (
+            <EmptyTableRow colSpan={2} message={emptyMessage} />
+          ) : (
+            questions.map((question) => (
+              <TableRow key={question.id}>
+                <TableCell className="text-gray-800">{question.text}</TableCell>
+                <TableCell>
+                  <ActionButtons
+                    viewHref={`/exams/${examId}/questions/${question.id}`}
+                    editHref={`/exams/${examId}/questions/${question.id}/edit`}
+                    onDelete={() => deleteQuestion(question.id)}
+                    immutable={question.immutable}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
     </SectionCard>
   )
 }

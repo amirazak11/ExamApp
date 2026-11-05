@@ -51,8 +51,6 @@ export function ForgetPasswordStep({
     const postsPayload = await forgetpassword({email :data.email ,
        redirectUrl: `${window.location.origin}/reset-password`
     });
-    console.log(data);
-    
       updateFormData({ email: data.email });
       toast.success(postsPayload.message);
       onNext();

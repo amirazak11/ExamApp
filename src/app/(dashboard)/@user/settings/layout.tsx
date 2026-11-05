@@ -22,11 +22,7 @@ const userMenu = [
   return (
     <>
 <div className="max-h-full gap-3">
-          <AppBreadcrumb  items={[
-    { label: "Home", href: "/" },
-    { label: "Components", href: "/components" },
-    { label: "Breadcrumb" },
-  ]} />
+          <AppBreadcrumb items={[{ label: "Home", href: "/" }, { label: "Settings" }]} />
 
 <div className="p-6 space-y-3">
       <Header title="Settings" icon={FolderCodeIcon} />

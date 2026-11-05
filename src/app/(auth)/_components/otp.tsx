@@ -25,8 +25,7 @@ export function OtpForm({
   onVerifyOtp,
   isPending,
 }: Props) {
-  const [seconds, setSeconds] = useState(0)
-  const [isVerificationStarted, setIsVerificationStarted] = useState(false)
+  const [seconds, setSeconds] = useState(60)
 
   const { control, handleSubmit } = useForm<OtpFormValues>({
     defaultValues: {
@@ -40,19 +39,10 @@ export function OtpForm({
   })
 
   useEffect(() => {
-    if (!isVerificationStarted || seconds <= 0) return
-
-    const timer = setTimeout(() => {
-      setSeconds((prev) => prev - 1)
-    }, 1000)
-
+    if (seconds <= 0) return
+    const timer = setTimeout(() => setSeconds((prev) => prev - 1), 1000)
     return () => clearTimeout(timer)
-  }, [isVerificationStarted, seconds])
-
-  const startTimer = () => {
-    setIsVerificationStarted(true)
-    setSeconds(60)
-  }
+  }, [seconds])
 
   const handleFormSubmit = (data: OtpFormValues) => {
     updateFormData?.({ otp: data.otp })
@@ -61,7 +51,7 @@ export function OtpForm({
 
   const resendCode = () => {
     onResendCode()
-    startTimer()
+    setSeconds(60)
   }
 
   return (
@@ -101,13 +91,13 @@ export function OtpForm({
         </button>
       </div>
 
-      {isVerificationStarted && seconds > 0 && (
+      {seconds > 0 && (
         <div className="text-center text-sm text-gray-500">
           You can request another code in: {seconds}s.
         </div>
       )}
 
-      {isVerificationStarted && seconds === 0 && (
+      {seconds === 0 && (
         <div className="text-center">
           <button
             type="button"

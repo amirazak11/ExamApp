@@ -7,15 +7,13 @@ import PasswordResetSent from "../_components/password-reset-sent"
 import { ForgetPasswordStep } from "../_components/forgetpassword"
 
 const steps = [
-  { id: 1, title: "Create Account", subtitle: "Tell us more about you" },
+  { id: 1, title: "Forgot Password", subtitle: "Enter your email to reset your password" },
   {
     id: 2,
-    title: "Verify OTP",
-    subtitle: "Verify your account",
-    description: "We've sent a verification code to your email. Please enter it to continue.",
+    title: "Check Your Email",
+    subtitle: "Password reset link sent",
+    description: "We've sent a password reset link to your email. Please check your inbox.",
   },
-  { id: 3, title: "Create Password", subtitle: "Secure your account" },
-  { id: 4, title: "Complete Profile", subtitle: "Finish your setup" },
 ]
 
 

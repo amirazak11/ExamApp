@@ -17,10 +17,10 @@ import type {
 } from "@/features/questions/types/questions"
 import { adminQueryKeys, type ImmutableVariables } from "../shared"
 
-export function useAdminQuestionsByExam(examId: string) {
+export function useAdminQuestionsByExam(examId: string, sort?: string) {
   return useQuery({
-    queryKey: adminQueryKeys.questions(examId),
-    queryFn: () => fetchAdminQuestionsByExam(examId),
+    queryKey: adminQueryKeys.questions(examId, sort),
+    queryFn: () => fetchAdminQuestionsByExam(examId, sort),
     enabled: !!examId,
   })
 }

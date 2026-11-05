@@ -7,7 +7,6 @@ export async function sendAnswer(body: ISubmitExamBody) {
   });
 
   const payload = await response.json();
-console.log(payload);
 
   if (!response.ok) {
     throw new Error(payload.message || "Failed to submit exam");

@@ -5,13 +5,8 @@ import { useMutation } from "@tanstack/react-query";
 export default function useOtp() {
   const { isPending, error, mutate } = useMutation({
     mutationFn: sendOtp,
-    onSuccess: (data) => {
-      console.log("hook success:", data);
-    },
-    onError: (error) => {
-      
-      console.error(error);
-    },
+    onSuccess: () => {},
+    onError: () => {},
   });
 
   return { isPending, error, sendOtp: mutate };

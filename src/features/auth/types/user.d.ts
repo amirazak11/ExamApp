@@ -1,4 +1,4 @@
-import { USER_ROLES } from "../constants/api.constant";
+import { USER_ROLES } from "../constants/user.constant";
 
 export type TRole = (typeof USER_ROLES)[keyof (typeof USER_ROLES)]
 

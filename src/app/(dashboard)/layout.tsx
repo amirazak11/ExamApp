@@ -20,25 +20,24 @@ const menuItems = [
   },
   {
     id: 2,
+    title: "Exams",
+    icon: "BookOpen",
+    link: "/exams",
+    roles: ["user", "admin"],
+  },
+  {
+    id: 3,
     title: "Account Settings",
     icon: "UserRound",
     link: "/settings",
-    roles: ["user"],
+    roles: ["user", "admin"],
   },
-  
   {
-    id: 3,
+    id: 4,
     title: "Audit Log",
     icon: "logs",
     link: "/audit-log",
     roles: ["admin"],
-  },
-    {
-    id: 4,
-    title: "Exams",
-    icon: "UserRound",
-    link: "/exams",
-    roles: ["user", "admin"],
   },
 ];
 
@@ -49,12 +48,12 @@ export default async function Layout({ admin, user }: LayoutProps) {
     redirect("/login");
   }
 
-    const sessionUser = session.user.role.toLowerCase();
+  const isAdmin = ["ADMIN", "SUPER_ADMIN"].includes(session.user.role);
+  const sessionUser = isAdmin ? "admin" : "user";
 
   const filteredMenuItems = menuItems.filter((item) =>
     item.roles.includes(sessionUser)
   );
-  const isAdmin = sessionUser === "admin";
 
   return (
     <div className="h-screen overflow-hidden">
@@ -70,17 +69,16 @@ export default async function Layout({ admin, user }: LayoutProps) {
           menuItems={filteredMenuItems}
           logoSrc="/logo.png"
           footerType="user"
-                   className={` ${
-            isAdmin ? "bg-foreground text-white" : "bg-gray-50"
-          }`}
+          variant={isAdmin ? "dark" : "light"}
+          className={isAdmin ? "bg-gray-800 text-white" : "bg-gray-50"}
         />
 
-        <main
-          className={`w-full h-screen `}
-        >        
-          {isAdmin ? admin : user}
-
-
+        <main className="w-full h-screen">
+          {isAdmin ? (
+            <div className="h-full overflow-y-auto bg-gray-100">{admin}</div>
+          ) : (
+            user
+          )}
         </main>
       </SidebarProvider>
     </div>

@@ -62,12 +62,7 @@ const normalizeEgyptPhone = (phone: string) => {
 
   return (
     <form
-       onSubmit={form.handleSubmit(
-    onSubmit,
-    (errors) => {
-      console.log("FORM ERRORS:", errors);
-    }
-  )}
+       onSubmit={form.handleSubmit(onSubmit)}
       className="space-y-6 w-full p-2 bg-white"
     >
       <FieldGroup>

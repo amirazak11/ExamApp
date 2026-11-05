@@ -1,37 +1,35 @@
 "use client"
 
+import Link from "next/link"
+import { Save, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface FormActionsProps {
-  onCancel: () => void
+  cancelHref: string
   isSubmitting?: boolean
-  submitLabel?: string
-  submittingLabel?: string
 }
 
-export function FormActions({
-  onCancel,
-  isSubmitting,
-  submitLabel = "Save",
-  submittingLabel = "Saving...",
-}: FormActionsProps) {
+export function FormActions({ cancelHref, isSubmitting }: FormActionsProps) {
   return (
-    <div className="flex justify-end gap-3 mt-4">
+    <>
       <Button
-        type="button"
-        variant="outline"
-        className="rounded-none px-6"
-        onClick={onCancel}
+        variant="secondary"
+        className="rounded-none gap-2 bg-gray-200 text-gray-800 hover:bg-gray-300"
+        asChild
       >
-        Cancel
+        <Link href={cancelHref}>
+          <X className="size-4" />
+          Cancel
+        </Link>
       </Button>
       <Button
         type="submit"
-        className="rounded-none px-6 bg-blue-600 hover:bg-blue-700"
+        className="rounded-none gap-2 bg-emerald-500 text-white hover:bg-emerald-600"
         disabled={isSubmitting}
       >
-        {isSubmitting ? submittingLabel : submitLabel}
+        <Save className="size-4" />
+        {isSubmitting ? "Saving..." : "Save"}
       </Button>
-    </div>
+    </>
   )
 }

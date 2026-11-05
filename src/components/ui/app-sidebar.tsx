@@ -16,6 +16,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
+  BookOpen,
   FolderCode,
   GraduationCap,
   UserRound,
@@ -46,11 +47,13 @@ type AppSidebarProps = {
   logoSrc?: string;
   className?: string;
   footerType?: "user" | "logout";
+  variant?: "light" | "dark";
 };
 
 const iconMap: Record<string, LucideIcon> = {
   diplomas: GraduationCap,
   GraduationCap: GraduationCap,
+  BookOpen: BookOpen,
   user: UserRound,
   UserRound: UserRound,
   profile: UserRound,
@@ -66,9 +69,16 @@ export function AppSidebar({
   logoSrc,
   className,
   footerType = "user",
+  variant = "light",
 }: AppSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const isDark = variant === "dark";
+
+  const matchesPath = (item: MenuItem) =>
+    item.exact
+      ? pathname === item.link
+      : pathname === item.link || pathname.startsWith(`${item.link}/`);
 
   const userName = session?.user?.username;
   const userEmail = session?.user?.email;
@@ -90,7 +100,12 @@ export function AppSidebar({
               className="h-auto w-28"
             />
 
-            <h1 className="mt-2 flex items-center gap-2 text-sm font-medium text-blue-600">
+            <h1
+              className={cn(
+                "mt-2 flex items-center gap-2 text-sm font-medium",
+                isDark ? "text-white" : "text-blue-600"
+              )}
+            >
               <FolderCode className="size-4" />
               {appName}
             </h1>
@@ -104,10 +119,13 @@ export function AppSidebar({
             {menuItems.map((item) => {
               const Icon = iconMap[item.icon] ?? FolderCode;
 
-              const isActive = item.exact
-                ? pathname === item.link
-                : pathname === item.link ||
-                  pathname.startsWith(`${item.link}/`);
+              // "/" owns every route that no other menu item matches (e.g. /[id]).
+              const isActive =
+                item.link === "/"
+                  ? !menuItems.some(
+                      (other) => other.link !== "/" && matchesPath(other)
+                    )
+                  : matchesPath(item);
 
               return (
                 <SidebarMenuItem key={item.id}>
@@ -116,9 +134,13 @@ export function AppSidebar({
                     isActive={isActive}
                     className={cn(
                       "h-auto w-full rounded-none border px-3 py-3 text-sm",
-                      isActive
-                        ? "border-blue-500 bg-blue-100 text-blue-600"
-                        : "border-transparent text-gray-500 hover:bg-blue-100"
+                      isDark
+                        ? isActive
+                          ? "border-gray-500 bg-gray-700 text-white data-[active=true]:bg-gray-700 data-[active=true]:text-white"
+                          : "border-transparent text-gray-300 hover:bg-gray-700 hover:text-white"
+                        : isActive
+                          ? "border-blue-500 bg-blue-100 text-blue-600"
+                          : "border-transparent text-gray-500 hover:bg-blue-100"
                     )}
                   >
                     <Link href={item.link} className="flex items-center gap-2">
@@ -141,9 +163,14 @@ export function AppSidebar({
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
                     size="lg"
-                    className="h-auto w-full justify-start gap-3 rounded-none px-0 py-0 hover:bg-transparent"
+                    className="h-auto w-full justify-start gap-3 rounded-none px-0 py-0 hover:bg-transparent data-[state=open]:bg-transparent"
                   >
-                    <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden border border-blue-500 bg-blue-100">
+                    <div
+                      className={cn(
+                        "flex size-10 shrink-0 items-center justify-center overflow-hidden",
+                        isDark ? "bg-gray-700" : "border border-blue-500 bg-blue-100"
+                      )}
+                    >
                       {userImage ? (
                         <Image
                           src={userImage}
@@ -153,16 +180,31 @@ export function AppSidebar({
                           className="size-full object-cover"
                         />
                       ) : (
-                        <UserRound className="size-5 text-blue-500" />
+                        <UserRound
+                          className={cn(
+                            "size-5",
+                            isDark ? "text-gray-300" : "text-blue-500"
+                          )}
+                        />
                       )}
                     </div>
 
                     <div className="flex min-w-0 flex-1 flex-col text-left leading-tight">
-                      <span className="truncate text-xs font-semibold text-blue-500">
+                      <span
+                        className={cn(
+                          "truncate text-xs font-semibold",
+                          isDark ? "text-white" : "text-blue-500"
+                        )}
+                      >
                         {userName ?? "Firstname"}
                       </span>
 
-                      <span className="truncate text-[10px] text-gray-500">
+                      <span
+                        className={cn(
+                          "truncate text-[10px]",
+                          isDark ? "text-gray-400" : "text-gray-500"
+                        )}
+                      >
                         {userEmail ?? "user-email@example.com"}
                       </span>
                     </div>

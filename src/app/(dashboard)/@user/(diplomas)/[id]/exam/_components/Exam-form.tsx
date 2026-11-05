@@ -1,6 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, useState } from "react";
+import { toast } from "sonner";
 import {
   Field,
   FieldContent,
@@ -93,7 +94,7 @@ export default function ExamForm({
         setExamResult(response.payload);
       },
       onError: (error) => {
-        console.error(error);
+        toast.error(error instanceof Error ? error.message : "Failed to submit exam");
       },
     });
   }

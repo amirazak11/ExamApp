@@ -5,6 +5,7 @@ export interface IExam {
   image: string | null;
   duration: number;
   diplomaId: string;
+  diploma?: { id: string; title: string } | null;
   immutable: boolean;
   createdAt: string;
   updatedAt: string;

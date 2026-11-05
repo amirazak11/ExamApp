@@ -1,33 +1,33 @@
 "use client"
 
+import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useForm, useFieldArray, useWatch } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Plus, Trash2 } from "lucide-react"
+import { Layers } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { SectionCard } from "../../../../../_components/shared/section-card"
-import { FormField } from "../../../../../_components/shared/form-field"
-import { FormActions } from "../../../../../_components/shared/form-actions"
+import { useAdminExams } from "@/features/admin/_hooks/exams/hooks"
 import {
   useCreateAdminQuestion,
   useUpdateAdminQuestion,
 } from "@/features/admin/_hooks/questions/hooks"
-
-const answerSchema = z.object({
-  text: z.string().min(1, "Answer text is required"),
-  isCorrect: z.boolean(),
-})
+import { AdminSelect } from "../../../../../_components/shared/admin-select"
+import { AnswersEditor } from "../../../../../_components/shared/answers-editor"
+import { FormActions } from "../../../../../_components/shared/form-actions"
+import { FormField } from "../../../../../_components/shared/form-field"
+import { PageHeader } from "../../../../../_components/shared/page-header"
+import { SectionCard } from "../../../../../_components/shared/section-card"
 
 const questionSchema = z.object({
+  examId: z.string().min(1, "Exam is required"),
   text: z.string().min(5, "Question must be at least 5 characters"),
   answers: z
-    .array(answerSchema)
+    .array(z.object({ text: z.string().min(1), isCorrect: z.boolean() }))
     .min(2, "At least 2 answers required")
-    .refine((answers) => answers.some((a) => a.isCorrect), {
-      message: "At least one answer must be marked as correct",
+    .refine((answers) => answers.filter((a) => a.isCorrect).length === 1, {
+      message: "Mark exactly one answer as correct",
     }),
 })
 
@@ -36,7 +36,7 @@ type QuestionFormValues = z.infer<typeof questionSchema>
 interface QuestionFormProps {
   examId: string
   questionId?: string
-  defaultValues?: Partial<QuestionFormValues>
+  defaultValues?: Pick<QuestionFormValues, "text" | "answers">
 }
 
 export function QuestionForm({
@@ -45,145 +45,113 @@ export function QuestionForm({
   defaultValues,
 }: QuestionFormProps) {
   const router = useRouter()
-  const { mutateAsync: createQuestion, isPending } = useCreateAdminQuestion()
-  const { mutateAsync: updateQuestion, isPending: isUpdating } =
-    useUpdateAdminQuestion()
+  const { data: exams } = useAdminExams({ limit: 100 })
+  const { mutateAsync: createQuestion } = useCreateAdminQuestion()
+  const { mutateAsync: updateQuestion } = useUpdateAdminQuestion()
+  const examTitle = exams?.exams.find((exam) => exam.id === examId)?.title ?? "Exam"
 
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors, isSubmitting },
   } = useForm<QuestionFormValues>({
     resolver: zodResolver(questionSchema),
-    defaultValues: defaultValues ?? {
-      text: "",
-      answers: [
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-      ],
+    defaultValues: {
+      examId,
+      text: defaultValues?.text ?? "",
+      answers: defaultValues?.answers ?? [],
     },
   })
 
-  const { fields, append, remove } = useFieldArray({ name: "answers", control })
-
-  const answers = useWatch({ control, name: "answers" }) ?? []
-
-  function setCorrect(index: number) {
-    answers.forEach((_, i) => {
-      setValue(`answers.${i}.isCorrect`, i === index)
-    })
-  }
-
   return (
     <form
-      onSubmit={handleSubmit(async (values) => {
-        if (questionId) {
-          await updateQuestion({ id: questionId, fields: values })
-        } else {
-          await createQuestion({ ...values, examId })
+      onSubmit={handleSubmit(async ({ examId: selectedExamId, ...fields }) => {
+        try {
+          if (questionId) {
+            await updateQuestion({ id: questionId, fields })
+          } else {
+            await createQuestion({ ...fields, examId: selectedExamId })
+          }
+
+          router.push(`/exams/${selectedExamId}`)
+        } catch {
+          // The request layer already shows the error as a toast.
         }
-
-        router.push(`/exams/${examId}/questions`)
       })}
-      className="overflow-y-auto h-[calc(100vh-180px)]"
     >
-      <SectionCard title="Question Information">
-        <div className="p-6 space-y-6">
-          <FormField
-            label="Question Text"
-            htmlFor="text"
-            error={errors.text?.message}
-            required
-            className="max-w-2xl"
-          >
-            <Textarea
-              id="text"
-              placeholder="Enter your question..."
-              rows={3}
-              {...register("text")}
-              aria-invalid={!!errors.text}
-              className="resize-none border-slate-300 focus-visible:border-blue-500 focus-visible:ring-0 rounded-none"
-            />
-          </FormField>
-
-          <div className="flex flex-col gap-3 max-w-2xl">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Answers <span className="text-red-500">*</span>
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="rounded-none border-gray-300 gap-1.5 text-xs h-7"
-                onClick={() => append({ text: "", isCorrect: false })}
-              >
-                <Plus className="size-3" />
-                Add Answer
-              </Button>
-            </div>
-
-            {errors.answers?.root && (
-              <p className="text-xs text-red-500">{errors.answers.root.message}</p>
-            )}
-            {typeof errors.answers?.message === "string" && (
-              <p className="text-xs text-red-500">{errors.answers.message}</p>
-            )}
-
-            <div className="space-y-2">
-              {fields.map((field, index) => (
-                <div key={field.id} className="flex items-center gap-2">
-                  <label className="flex items-center gap-2 cursor-pointer shrink-0">
-                    <input
-                      type="radio"
-                      name="correctAnswer"
-                      checked={answers[index]?.isCorrect ?? false}
-                      onChange={() => setCorrect(index)}
-                      className="accent-emerald-500 size-4"
-                    />
-                    <span className="text-xs text-gray-500 w-4">{index + 1}.</span>
-                  </label>
-                  <Input
-                    placeholder={`Answer ${index + 1}`}
-                    {...register(`answers.${index}.text`)}
-                    aria-invalid={!!errors.answers?.[index]?.text}
-                    className={
-                      answers[index]?.isCorrect
-                        ? "border-emerald-300 bg-emerald-50 focus-visible:border-emerald-500"
-                        : ""
-                    }
-                  />
-                  {fields.length > 2 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="shrink-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
-                      onClick={() => remove(index)}
-                    >
-                      <Trash2 className="size-3.5" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <p className="text-xs text-gray-400">
-              Select the radio button next to the correct answer.
-            </p>
-          </div>
-        </div>
-      </SectionCard>
-
-      <FormActions
-        onCancel={() => router.push(`/exams/${examId}/questions`)}
-        isSubmitting={isSubmitting || isPending || isUpdating}
-        submitLabel={questionId ? "Save Changes" : "Save"}
+      <PageHeader
+        breadcrumbs={[
+          { label: "Exams", href: "/exams" },
+          { label: examTitle, href: `/exams/${examId}` },
+          { label: questionId ? "Edit Question" : "Add Questions" },
+        ]}
+        leading={
+          !questionId && (
+            <Button
+              variant="outline"
+              className="rounded-none gap-2 border-gray-300 text-gray-700"
+              asChild
+            >
+              <Link href={`/exams/${examId}/questions/bulk`}>
+                <Layers className="size-4" />
+                Bulk Add Mode
+              </Link>
+            </Button>
+          )
+        }
+        actions={
+          <FormActions cancelHref={`/exams/${examId}`} isSubmitting={isSubmitting} />
+        }
       />
+
+      <div className="space-y-4 p-6">
+        <SectionCard title="Question Information">
+          <div className="space-y-5 p-4">
+            <FormField label="Exam" htmlFor="examId" error={errors.examId?.message}>
+              {/* Controlled so the value still applies once the options finish loading. */}
+              <Controller
+                name="examId"
+                control={control}
+                render={({ field }) => (
+                  <AdminSelect
+                    id="examId"
+                    placeholder="Select exam"
+                    disabled={!!questionId}
+                    options={(exams?.exams ?? []).map((exam) => ({
+                      value: exam.id,
+                      label: exam.title,
+                    }))}
+                    {...field}
+                  />
+                )}
+              />
+            </FormField>
+
+            <FormField
+              label="Question Headline"
+              htmlFor="text"
+              error={errors.text?.message}
+            >
+              <Input id="text" {...register("text")} aria-invalid={!!errors.text} />
+            </FormField>
+          </div>
+        </SectionCard>
+
+        <SectionCard title="Question Answers">
+          <Controller
+            name="answers"
+            control={control}
+            render={({ field }) => (
+              <AnswersEditor
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.answers?.message ?? errors.answers?.root?.message}
+              />
+            )}
+          />
+        </SectionCard>
+      </div>
     </form>
   )
 }

@@ -78,7 +78,7 @@ export default function LoginForm() {
                 <FieldError errors={[fieldState.error]} />
               )}
               <Link
-                href="/forget-password"
+                href="/forgetpassword"
                 className="flex justify-end text-sm font-medium text-blue-600"
               >
                 Forgot password?

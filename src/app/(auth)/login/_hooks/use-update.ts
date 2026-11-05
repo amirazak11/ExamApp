@@ -19,9 +19,7 @@ export default function useUpdateProfile() {
       });
     },
 
-    onError: (error) => {
-      console.error(error);
-    },
+    onError: () => {},
   });
 
   return {

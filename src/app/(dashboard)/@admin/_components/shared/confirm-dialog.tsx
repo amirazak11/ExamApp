@@ -11,51 +11,53 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Trash2 } from "lucide-react"
+import { TriangleAlert } from "lucide-react"
 
 interface ConfirmDialogProps {
-  title?: string
+  title: string
   description?: string
+  confirmLabel?: string
   onConfirm: () => void
   trigger?: React.ReactNode
-  disabled?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function ConfirmDialog({
-  title = "Are you sure?",
-  description = "This action cannot be undone.",
+  title,
+  description = "This action is permanent and cannot be undone.",
+  confirmLabel = "Yes, Delete",
   onConfirm,
   trigger,
-  disabled,
+  open,
+  onOpenChange,
 }: ConfirmDialogProps) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        {trigger ?? (
-          <Button
-            variant="destructive"
-            size="sm"
-            className="gap-2"
-            disabled={disabled}
-          >
-            <Trash2 className="size-4" />
-            Delete
-          </Button>
-        )}
-      </AlertDialogTrigger>
-      <AlertDialogContent className="rounded-none">
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
+      <AlertDialogContent className="gap-0 overflow-hidden rounded-none bg-white p-0">
+        <AlertDialogHeader className="items-center px-8 py-8 text-center sm:text-center place-items-center">
+          <div className="mb-3 flex size-20 items-center justify-center rounded-full bg-red-50">
+            <div className="flex size-12 items-center justify-center rounded-full bg-red-100">
+              <TriangleAlert className="size-6 text-red-600" />
+            </div>
+          </div>
+          <AlertDialogTitle className="text-base font-semibold text-red-600">
+            {title}
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-xs text-gray-500">
+            {description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-none">Cancel</AlertDialogCancel>
+        <AlertDialogFooter className="grid grid-cols-2 gap-3 border-t border-gray-200 bg-gray-50 p-4 sm:grid">
+          <AlertDialogCancel className="rounded-none border-0 bg-gray-200 text-gray-800 hover:bg-gray-300">
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
-            className="rounded-none bg-red-500 hover:bg-red-600 text-white"
+            className="rounded-none bg-red-600 text-white hover:bg-red-700"
             onClick={onConfirm}
           >
-            Delete
+            {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -21,10 +21,8 @@ const steps = [
     title: "Verify OTP",
     subtitle: "Verify your account",
     description:
-      "We've sent a verification code to your email. Please enter it to continue.",
-  },
-  { id: 3, title: "Create Password", subtitle: "Secure your account" },
-  { id: 4, title: "Complete Profile", subtitle: "Finish your setup" },
+      "",
+  }
 ];
 
 export default function RegisterStepperPage() {

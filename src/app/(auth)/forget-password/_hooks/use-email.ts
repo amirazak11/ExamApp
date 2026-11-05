@@ -6,9 +6,7 @@ import { createAccount } from "@/features/auth/api/auth/auth.api";
 export default function useEmail() {
   const { isPending, error, mutate } = useMutation({
     mutationFn: createAccount,
-    onSuccess: (data) => {
-      console.log("hook success:", data);
-    },
+    onSuccess: () => {},
     onError: (error) => {
                 toast.error(error.message)
     },

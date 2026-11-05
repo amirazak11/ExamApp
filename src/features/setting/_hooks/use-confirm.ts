@@ -5,13 +5,8 @@ import { confirmOtp } from "../api/auth/change-email.api";
 export default function useConfirm() {
   const { isPending, error, mutate } = useMutation({
     mutationFn: confirmOtp,
-    onSuccess: (data) => {
-      console.log("hook success:", data);
-    },
-    onError: (error) => {
-      
-      console.error(error);
-    },
+    onSuccess: () => {},
+    onError: () => {},
   });
 
   return { isPending, error, confirmOtp: mutate };

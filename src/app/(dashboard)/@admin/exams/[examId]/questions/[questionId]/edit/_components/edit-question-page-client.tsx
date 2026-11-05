@@ -1,8 +1,5 @@
 "use client"
 
-import { HelpCircle } from "lucide-react"
-import { AppBreadcrumb } from "@/app/(dashboard)/@user/(diplomas)/_components/shared/breadcremb"
-import { Header } from "@/app/(dashboard)/@user/(diplomas)/_components/shared/header"
 import { useAdminQuestion } from "@/features/admin/_hooks/questions/hooks"
 import { QuestionForm } from "../../../new/_components/question-form"
 
@@ -28,28 +25,16 @@ export function EditQuestionPageClient({
   }
 
   return (
-    <>
-      <AppBreadcrumb
-        items={[
-          { label: "Exams", href: "/exams" },
-          { label: "Questions", href: `/exams/${examId}/questions` },
-          { label: "Edit Question" },
-        ]}
-      />
-      <div className="p-6 space-y-4">
-        <Header title="Edit Question" icon={HelpCircle} backbutton />
-        <QuestionForm
-          examId={examId}
-          questionId={questionId}
-          defaultValues={{
-            text: question.text,
-            answers: question.answers.map((answer) => ({
-              text: answer.text,
-              isCorrect: answer.isCorrect,
-            })),
-          }}
-        />
-      </div>
-    </>
+    <QuestionForm
+      examId={examId}
+      questionId={questionId}
+      defaultValues={{
+        text: question.text,
+        answers: question.answers.map((answer) => ({
+          text: answer.text,
+          isCorrect: answer.isCorrect,
+        })),
+      }}
+    />
   )
 }

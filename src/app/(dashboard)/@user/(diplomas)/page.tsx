@@ -8,11 +8,7 @@ export default async function Diplomas() {
   return (
 
     <>
-      <AppBreadcrumb   items={[
-    { label: "Home", href: "/" },
-    { label: "Components", href: "/components" },
-    { label: "Breadcrumb" },
-  ]} />
+      <AppBreadcrumb items={[{ label: "Home", href: "/" }, { label: "Diplomas" }]} />
 
         <div className="p-6 space-y-3">
       <Header title="Diplomas" icon={FolderCodeIcon} />

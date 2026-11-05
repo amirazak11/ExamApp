@@ -7,5 +7,8 @@ export async function GET(
 ) {
   const { examId } = await context.params
 
-  return proxyJsonRequest(request, `/questions/exam/${examId}`)
+  const query = request.nextUrl.searchParams.toString()
+  const suffix = query ? `?${query}` : ""
+
+  return proxyJsonRequest(request, `/questions/exam/${examId}${suffix}`)
 }
